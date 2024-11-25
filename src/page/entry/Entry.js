@@ -3,6 +3,7 @@ import { Container } from 'react-bootstrap';
 import "./entry.style.css"
 import Login from '../../components/login/Login';
 import { useState } from 'react';
+import ListCustomer from '../../components/listCustomers/ListCustomer';
 function Entry() {
 const [email , setEmail] = useState('');
 const [password, setPassword] = useState('');
@@ -33,9 +34,11 @@ e.preventDefault()
   return (
     <div className='enrty-page bg-info'>
         <Container className="  p-5 my-5 bg-light rounded   frombox">
-        <Login handleOnChange = {handleOnChange} 
+        {/* <Login handleOnChange = {handleOnChange} 
         email = {email}
-        pass = {password}/>
+        pass = {password}/> */}
+
+        <ListCustomer/>
         </Container>
     </div>
   )
