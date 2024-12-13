@@ -1,73 +1,146 @@
-import React, { useEffect, useState } from 'react';
-import { listCustomers } from '../../services/CustomerServices';
-import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useEffect, useState } from "react";
+import { deleteCustomer, listCustomers } from "../../services/CustomerServices";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
 
 const ListCustomer = () => {
-  const [Customers, setCustomers] = useState([]);
-  const navigator = useNavigate();
+  const [customers, setCustomers] = useState([]);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
+    fetchAllCustomers();
+  }, []);
+
+  const fetchAllCustomers = () => {
     listCustomers()
       .then((response) => {
-        console.log(response.data); // Check data structure
-        setCustomers(response.data);
+        const customersList = Array.isArray(response.data) ? response.data : [];
+        setCustomers(customersList);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  };
 
-  const addNewCustomer = () => {
-    navigator('/add-customer');
+  const handleAddCustomer = () => {
+    navigate("/add-customer");
+  };
+
+  const handleUpdateCustomer = (id) => {
+    navigate(`/edit-customer/${id}`);
+  };
+
+  const handleDeleteCustomer = (id) => {
+    deleteCustomer(id)
+      .then(() => {
+        fetchAllCustomers();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   return (
-    <div className="container my-4">
+    <Box
+      sx={{
+        padding: "2rem",
+        backgroundColor: "#000000",
+        color: "#FFFFFF",
+        minHeight: "100vh",
+      }}
+    >
       {/* Header Section */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2 className="text-primary">List of Customers</h2>
-        <button className="btn btn-success" onClick={addNewCustomer}>
-          <i className="bi bi-plus-circle"></i> Add Customer
-        </button>
-      </div>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "1.5rem",
+        }}
+      >
+        <Typography variant="h4" sx={{ color: "#FFFFFF" }}>
+          List of Customers
+        </Typography>
+        <Button
+          variant="contained"
+          sx={{
+            backgroundColor: "#4CAF50",
+            '&:hover': { backgroundColor: "#45A049" },
+          }}
+          onClick={handleAddCustomer}
+        >
+          Add Customer
+        </Button>
+      </Box>
 
       {/* Table Section */}
-      <div className="table-responsive">
-        <table className="table table-striped table-bordered">
-          <thead className="table-dark">
-            <tr>
-              <th>Name</th>
-              <th>Mobile Number</th>
-              <th>Email Id</th>
-              <th>Age</th>
-              <th>Aadhaar Number</th>
-              <th>Id</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Customers.length > 0 ? (
-              Customers.map((customer) => (
-                <tr key={customer.id}>
-                  <td>{customer.name}</td>
-                  <td>{customer.mobile}</td>
-                  <td>{customer.emailId}</td>
-                  <td>{customer.age}</td>
-                  <td>{customer.aadhaarNumber}</td>
-                  <td>{customer.id}</td>
-                </tr>
+      <TableContainer component={Paper} sx={{ backgroundColor: "#333333" }}>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ backgroundColor: "#444444" }}>
+              <TableCell sx={{ color: "#FFFFFF" }}>Name</TableCell>
+              <TableCell sx={{ color: "#FFFFFF" }}>Mobile Number</TableCell>
+              <TableCell sx={{ color: "#FFFFFF" }}>Email Id</TableCell>
+              <TableCell sx={{ color: "#FFFFFF" }}>Age</TableCell>
+              <TableCell sx={{ color: "#FFFFFF" }}>Aadhaar Number</TableCell>
+              <TableCell sx={{ color: "#FFFFFF" }}>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {customers.length > 0 ? (
+              customers.map((customer) => (
+                <TableRow key={customer.id}>
+                  <TableCell sx={{ color: "#FFFFFF" }}>{customer.name}</TableCell>
+                  <TableCell sx={{ color: "#FFFFFF" }}>{customer.mobile}</TableCell>
+                  <TableCell sx={{ color: "#FFFFFF" }}>{customer.emailId}</TableCell>
+                  <TableCell sx={{ color: "#FFFFFF" }}>{customer.age}</TableCell>
+                  <TableCell sx={{ color: "#FFFFFF" }}>{customer.aadhaarNumber}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      sx={{ color: "#FFFFFF", borderColor: "#FFFFFF" }}
+                      onClick={() => handleUpdateCustomer(customer.id)}
+                    >
+                      Update
+                    </Button>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        backgroundColor: "#FF0000",
+                        color: "#FFFFFF",
+                        marginLeft: "1rem",
+                        '&:hover': { backgroundColor: "#CC0000" },
+                      }}
+                      onClick={() => handleDeleteCustomer(customer.id)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
               ))
             ) : (
-              <tr>
-                <td colSpan="6" className="text-center">
+              <TableRow>
+                <TableCell colSpan={6} sx={{ color: "#FFFFFF", textAlign: "center" }}>
                   No customers found
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 

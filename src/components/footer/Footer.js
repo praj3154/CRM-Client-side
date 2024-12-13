@@ -1,13 +1,25 @@
-import React from 'react'
-import "./Footer.css"
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+
 const Footer = () => {
   return (
-    <div>
-      <footer className='footer'>
-        <span> All rights reserved 2024 by Prajwal Bahekar</span>
-      </footer>
-    </div>
-  )
-}
+    <Box
+      component="footer"
+      sx={{
+        backgroundColor: '#000000',
+        color: '#FFFFFF',
+        padding: '1rem 2rem',
+        textAlign: 'center',
+        position: 'relative',
+        bottom: 0,
+        width: '100%',
+      }}
+    >
+      <Typography variant="body2" sx={{ fontSize: '1rem' }}>
+        All rights reserved 2024 by Prajwal Bahekar
+      </Typography>
+    </Box>
+  );
+};
 
-export default Footer
+export default Footer;
